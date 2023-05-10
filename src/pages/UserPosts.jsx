@@ -23,6 +23,7 @@ function UserPosts() {
   const { id } = useParams();
   const [userPost, setUserPost] = useState();
   const [postToEdit, setPostToEdit] = useState({});
+  const [postToCreate, setPostToCreate] = useState({});
 
   // console.log(postToEdit);
 
@@ -39,6 +40,10 @@ function UserPosts() {
   const editPostPostToEdit = (value, parameter) => {
     const newPost = { ...postToEdit, [parameter]: value };
     setPostToEdit(newPost);
+  };
+  const editPostPostToCreate = (value, parameter) => {
+    const newPost = { ...postToEdit, [parameter]: value };
+    setPostToCreate(newPost);
   };
   const deleteHandler = (postId) => {
     axios
@@ -68,35 +73,88 @@ function UserPosts() {
           .then((res) => setUserPost(res.data));
       });
   };
+  const createhHandler = () => {
+    axios
+      .post(`https://jsonplaceholder.typicode.com/posts`, postToCreate)
+      .then((res) => {
+        console.log(res);
+        axios
+          .get(`https://jsonplaceholder.typicode.com/users/${id}/posts`)
+          .then((res) => setUserPost(res.data));
+      });
+  };
 
   return (
     <Layout>
       <Row>
-        <Form>
-          <h2>Edit post {postToEdit.id}</h2>
-          <FormGroup>
-            <Input
-              id="exampletitle"
-              name="title"
-              placeholder="title"
-              type="title"
-              value={postToEdit && postToEdit.title}
-              onChange={(e) => editPostPostToEdit(e.target.value, "title")}
-            />
-          </FormGroup>{" "}
-          <FormGroup>
-            <Input
-              id="exampleBody"
-              name="body"
-              placeholder="body"
-              type="text"
-              value={postToEdit && postToEdit.body}
-              onChange={(e) => editPostPostToEdit(e.target.value, "body")}
-            />
-          </FormGroup>{" "}
-          <Button onClick={patchHandler}>Submit</Button>
-        </Form>
-        <Col ms={12}>
+        <Row>
+          <Col>
+            <Form>
+              <h2>Edit post {postToEdit.id}</h2>
+              <FormGroup>
+                <Input
+                  id="exampletitle"
+                  name="title"
+                  placeholder="title"
+                  type="title"
+                  value={postToEdit && postToEdit.title}
+                  onChange={(e) => editPostPostToEdit(e.target.value, "title")}
+                />
+              </FormGroup>{" "}
+              <FormGroup>
+                <Input
+                  id="exampleBody"
+                  name="body"
+                  placeholder="body"
+                  type="text"
+                  value={postToEdit && postToEdit.body}
+                  onChange={(e) => editPostPostToEdit(e.target.value, "body")}
+                />
+              </FormGroup>{" "}
+              <Button onClick={patchHandler}>Submit</Button>
+            </Form>
+          </Col>
+          <Col>
+            <Form>
+              <h2>Create post {postToEdit.id}</h2>
+              <FormGroup>
+                <Input
+                  id="exampleId"
+                  name="userId"
+                  placeholder="userId"
+                  type="text"
+                  onChange={(e) =>
+                    editPostPostToCreate(e.target.value, "userId")
+                  }
+                />
+              </FormGroup>{" "}
+              <FormGroup>
+                <Input
+                  id="exampletitle"
+                  name="title"
+                  placeholder="title"
+                  type="title"
+                  onChange={(e) =>
+                    editPostPostToCreate(e.target.value, "title")
+                  }
+                />
+              </FormGroup>{" "}
+              <FormGroup>
+                <Input
+                  id="exampleBody"
+                  name="body"
+                  placeholder="body"
+                  type="text"
+                  onChange={(e) => editPostPostToCreate(e.target.value, "body")}
+                />
+              </FormGroup>{" "}
+              <Button className="btn btn-success" onClick={createhHandler}>
+                Create
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+        <Row ms={12}>
           {userPost &&
             userPost.map((e) => (
               <Card key={e.id} className="my-2" color="primary" outline>
@@ -122,7 +180,7 @@ function UserPosts() {
                 </CardFooter>
               </Card>
             ))}
-        </Col>
+        </Row>
       </Row>
     </Layout>
   );
